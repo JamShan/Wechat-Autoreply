@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">微信小助手</string>
+    
+    <string name="desc">\n锁屏界面显示微信好友消息或自动解锁回复消息\n\n自动回复功能通过辅助功能模拟触摸按钮实现\n\n有些微信版本或混合锁屏可能无法自动回复请自行测试\n\n软件绿色无毒无污染无联网纯单机版仅供学习或娱乐\n\n更多精彩内容尽在微信公众号“code-219”</string>
+    
+</resources>

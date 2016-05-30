@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/ui" >
+
+    <LinearLayout
+        android:id="@+id/checklinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal" >
+	    <CheckBox
+	        android:id="@+id/autocheck"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#5F656D"
+	        android:text="自动回复" />
+	    
+	    <CheckBox
+	        android:id="@+id/allcheck"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="15dp"
+	        android:textColor="#5F656D"
+	        android:text="不显示详情" />
+	</LinearLayout>
+	
+    <Button
+        android:id="@+id/aboutbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/setbtn"
+        android:layout_marginBottom="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button"
+        android:text="关于软件"
+        android:textColor="#5F656D" />
+        
+    <Button
+        android:id="@+id/setbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/button"
+        android:textColor="#5F656D" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checklinearLayout"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp" >
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="指定好友" />
+
+            <EditText
+                android:id="@+id/editfriend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:maxLength="15"
+                android:maxLines="2"
+                android:textColor="#5F656D" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" >
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="回复内容" />
+
+            <EditText
+                android:id="@+id/editmsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:maxLength="100"
+                android:maxLines="2"
+                android:textColor="#5F656D" >
+
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/startbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/button"
+            android:text="保存配置"
+            android:textColor="#5F656D" />
+    </LinearLayout>
+
+</RelativeLayout>
