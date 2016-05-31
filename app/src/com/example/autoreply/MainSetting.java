@@ -34,14 +34,15 @@ public class MainSetting extends Activity {
 	private CheckBox autobox;
 	private CheckBox allbox;
 	private LinearLayout linearlayout3;
+	//系统版本是否支持自动回复，需Android4.3以上才能直接通过组件id搜索
 	private boolean canAuto;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {  
-	    super.onCreate(savedInstanceState);  
-	    //requestWindowFeature(Window.FEATURE_NO_TITLE);
+	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
 	    
+	    //检查系统版本
 	    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
 	    	canAuto = true;
 	    else
@@ -56,14 +57,15 @@ public class MainSetting extends Activity {
 	    setbtn = (Button) this.findViewById(R.id.setbtn);
 	    linearlayout3 = (LinearLayout) this.findViewById(R.id.linearLayout3);
 	    
+	    //设置默认信息
 	    editmsg.setText(StaticData.message);
 	    editfriend.setText(StaticData.friend);
 	    linearlayout3.setVisibility(View.GONE);
 	    
+	    //判断并显示辅助服务是否开启
 	    this.showInfo();
 	    
 	    autobox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
 			@Override
 			public void onCheckedChanged(CompoundButton cb, boolean b) {
 				if(!canAuto) {
@@ -84,7 +86,6 @@ public class MainSetting extends Activity {
 	    });
 	    
 	    allbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
 			@Override
 			public void onCheckedChanged(CompoundButton cb, boolean b) {
 				if(b) {
@@ -139,8 +140,9 @@ public class MainSetting extends Activity {
 	    
 	}
 	
+	//显示提示信息，在按钮事件监听器内调用的
 	private void showTips(String info) {
-		Toast.makeText(this, info, Toast.LENGTH_LONG).show();
+		Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
 	}
 	
 	private void showInfo() {
@@ -149,11 +151,10 @@ public class MainSetting extends Activity {
 	    else
 	    	setbtn.setText("服务尚未开启 >>");
 	}
-	
+	//获取系统正在运行的服务列表来判断辅助服务是否开启
 	private boolean serviceIsRunning() {
 		ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-
-		List<RunningServiceInfo> lists = am.getRunningServices(150);
+		List<RunningServiceInfo> lists = am.getRunningServices(150);//获取数量可适当调整
 		for (RunningServiceInfo info : lists) {
 			if (info.service.getClassName().equals("com.example.autoreply.AutoReplyService")) {
 				return true;
@@ -163,12 +164,13 @@ public class MainSetting extends Activity {
 		
 	}
 	
-	@Override  
-	public void onResume(){  
+	@Override
+	public void onResume(){
 		super.onResume();  
 		showInfo();
 	}
 	
+	//监听返回键并显示退出提示框
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		 if(keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME){
@@ -176,7 +178,7 @@ public class MainSetting extends Activity {
 		 }
 		 return super.onKeyDown(keyCode, event);
 	}
-	
+	//退出提示框
 	private void showExitDialog() {  
         AlertDialog.Builder builder = new Builder(MainSetting.this);
         String message = "";
@@ -185,15 +187,14 @@ public class MainSetting extends Activity {
         else
         	message = "服务已经关闭\n";
         builder.setMessage(message + "确定要退出吗?");
-        //builder.setTitle("提示");  
-        builder.setPositiveButton("确认",  
+        builder.setPositiveButton("确认", 
         new android.content.DialogInterface.OnClickListener() {  
             @Override  
             public void onClick(DialogInterface dialog, int which) {  
             	finish();  
             }  
         });  
-        builder.setNegativeButton("取消",  
+        builder.setNegativeButton("取消", 
         new android.content.DialogInterface.OnClickListener() {  
             @Override  
             public void onClick(DialogInterface dialog, int which) {  

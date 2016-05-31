@@ -30,6 +30,7 @@ public class LockScreenActivity extends Activity {
 	private ListView listView;
 	private Button Levelbtn;
 	
+	//电量相关
 	private int batteryLevel;
     private int batteryScale;
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -43,7 +44,7 @@ public class LockScreenActivity extends Activity {
             Levelbtn.setText((batteryLevel*100/batteryScale)+"%");
         }
     };
-	
+	//30秒更新一次锁屏时间信息
 	private final Handler handler = new Handler();
     private final Runnable runnable = new Runnable() {
          public void run () {
@@ -97,14 +98,14 @@ public class LockScreenActivity extends Activity {
 		//注册广播接收器
 	    receiver = new showReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addAction("com.example.autoreply.SHOW_ACTION");
+        filter.addAction("com.example.autoreply.SHOW_ACTION");//自定义广播，用于实时更新锁屏显示信息
         registerReceiver(receiver, filter);
         
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         //注册接收器以获取电量信息
         registerReceiver(broadcastReceiver, intentFilter);
 		
-        //显示数据
+        //显示信息
 		showInfo();
 		showDetails();
       		
@@ -138,6 +139,7 @@ public class LockScreenActivity extends Activity {
 		Log.i("demo", "showDetails");
 	}
 	
+	//屏蔽返回事件
 	@Override
 	public void onBackPressed() {
 		
@@ -147,9 +149,8 @@ public class LockScreenActivity extends Activity {
 	public void finish() {
 		super.finish();
 		//activity的消失动画效果
-		
-		//overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
-		overridePendingTransition(R.drawable.activity_close, R.drawable.activity_start);
+		//overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);//系统自带动画
+		overridePendingTransition(R.drawable.activity_close, R.drawable.activity_start);//自定义动画
 	}
 	
 	@Override
@@ -162,6 +163,7 @@ public class LockScreenActivity extends Activity {
 		Log.i("demo", "Destroy");
 	}
 
+	//自定义广播接收器，实时更新锁屏信息
 	class showReceiver extends BroadcastReceiver {
     	@Override
     	public void onReceive(Context context, Intent intent) {

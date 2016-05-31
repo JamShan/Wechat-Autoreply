@@ -30,7 +30,7 @@ public class AutoReplyService extends AccessibilityService {
 	private boolean enableKeyguard = true;//默认有屏幕锁
 	private int mode = 1;//微信通知模式：1.详细通知2.非详细通知
 	private AccessibilityNodeInfo editText = null;
-	//private AccessibilityNodeInfo qtextView = null;//群聊标题
+
 	//锁屏、唤醒相关
 	private KeyguardManager km;
 	private KeyguardLock kl;
@@ -82,15 +82,11 @@ public class AutoReplyService extends AccessibilityService {
         return list.get(0);
     }
 	
+	//通过组件名递归查找编辑框
     private void findNodeInfosByName(AccessibilityNodeInfo nodeInfo, String name) {
     	if(name.equals(nodeInfo.getClassName())) {
-    		//if(name.equals("android.widget.TextView") && (!nodeInfo.isClickable()) && (!nodeInfo.getText().toString().matches("[012]\\d:[0-6]\\d")) && (!nodeInfo.getText().toString().matches("微信.*")) && (!nodeInfo.getText().toString().equals("我"))) {
-    		//	qtextView = nodeInfo;
-    		//	return;
-    		//} else if(name.equals("android.widget.EditText")) {
     			editText = nodeInfo;
     			return;
-    		//}
     	}
 		for(int i = 0; i < nodeInfo.getChildCount(); i++) {
 	        findNodeInfosByName(nodeInfo.getChild(i), name);
@@ -132,8 +128,8 @@ public class AutoReplyService extends AccessibilityService {
             	StaticData.total++;
             	setData(message);
             	
-            	Log.i("demo", "收到通知栏消息:" + message);
-            	
+            	//Log.i("demo", "收到通知栏消息:" + message);
+            	//收到信息发送更新锁屏界面广播
             	Intent i = new Intent("com.example.autoreply.SHOW_ACTION");
             	sendBroadcast(i);
             	
@@ -145,7 +141,7 @@ public class AutoReplyService extends AccessibilityService {
             	else
             		mode = 1;
             	
-            	//判断是否开启过滤
+            	//判断是否指定好友并过滤
             	if(StaticData.isfriend && (mode == 1) && ( !message.contains(StaticData.friend) )) {
         			return;
             	}
@@ -173,11 +169,6 @@ public class AutoReplyService extends AccessibilityService {
 	        	performBack(this);
 	        }
         	break;
-        	
-        case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-        	String className = event.getClassName().toString();
-        	
-        	Log.i("demo", "窗口改变" + className);
         }
     }   
  
@@ -189,8 +180,7 @@ public class AutoReplyService extends AccessibilityService {
 		int hour = time.hour;
 		int minute = time.minute;
 		if(StaticData.showall) {
-			//if(data.length() > 23)
-			//	data = data.substring(0, 23) + "...";
+
 		} else {
 			if(!data.equals("微信：你收到了一条消息。")) {
 				data = data.split(":")[0];
@@ -199,7 +189,6 @@ public class AutoReplyService extends AccessibilityService {
 			}
 		}
 		data = data.format("%s     %02d:%02d", data, hour, minute);
-		//data = data + "     " + hour + ":" + minute;
 		StaticData.data.add(data);
     }
     
@@ -214,11 +203,6 @@ public class AutoReplyService extends AccessibilityService {
         AccessibilityNodeInfo targetNode = null;
         
         //判断是否群聊以及mode=2时是否匹配好友
-        //findNodeInfosByName(nodeInfo, "android.widget.TextView");
-        //targetNode = qtextView;
-        //if(targetNode != null) {
-        //	Log.i("demo", "name=" + targetNode.getText().toString());
-        //}
         List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByViewId(StaticData.qunId);
     	if( !list.isEmpty() ) {
     		targetNode = list.get(0);
@@ -246,8 +230,8 @@ public class AutoReplyService extends AccessibilityService {
         
         //粘贴回复信息
         if(targetNode != null) {
-        	//android > 21= 5.0时可以用ACTION_SET_TEXT 
-	        //android > 18=4.3时可以通过复制粘贴的方法,先确定焦点，再粘贴ACTION_PASTE 
+        	//android >= 21=5.0时可以用ACTION_SET_TEXT 
+	        //android >= 18=4.3时可以通过复制粘贴的方法,先确定焦点，再粘贴ACTION_PASTE 
 	        //使用剪切板
 	        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE); 
 	        ClipData clip = ClipData.newPlainText("message", StaticData.message);
@@ -261,6 +245,7 @@ public class AutoReplyService extends AccessibilityService {
 	        //Log.i("demo", "粘贴内容");
         }
         
+        //查找发送按钮
         if(targetNode != null) { //通过组件查找
         	Log.i("demo", "查找发送按钮...");
         	targetNode = null;
@@ -272,6 +257,7 @@ public class AutoReplyService extends AccessibilityService {
         		targetNode = findNodeInfosByText(nodeInfo, "发送");
         }
 
+        //点击发送按钮
         if(targetNode != null) {
         	Log.i("demo", "点击发送按钮中...");
             final AccessibilityNodeInfo n = targetNode;
@@ -279,6 +265,7 @@ public class AutoReplyService extends AccessibilityService {
             StaticData.replaied++;
             
         }
+        //恢复锁屏状态
         wakeAndUnlock(false);
     } 
     
@@ -287,8 +274,8 @@ public class AutoReplyService extends AccessibilityService {
         Toast.makeText(this, "微信助手服务被中断啦~", Toast.LENGTH_LONG).show();
     }
 
+    //服务开启时初始化
     @Override
-
     protected void onServiceConnected() {
         super.onServiceConnected();
         Log.i("demo", "开启");
@@ -300,7 +287,6 @@ public class AutoReplyService extends AccessibilityService {
 	    kl = km.newKeyguardLock("unLock");
 	    
 	    editText = null;
-	    //qtextView = null;
 	    
 	    //注册广播接收器
 	    sreceiver = new ScreenOffReceiver();
@@ -328,7 +314,6 @@ public class AutoReplyService extends AccessibilityService {
         wakeAndUnlock(false);
         
         editText = null;
-        //qtextView = null;
         
         //注销广播接收器
         unregisterReceiver(sreceiver);
@@ -339,10 +324,11 @@ public class AutoReplyService extends AccessibilityService {
         Toast.makeText(this, "_已关闭微信助手服务_", Toast.LENGTH_LONG).show();
     }
     
-    //屏幕状态变化广播接收器
+    //屏幕状态变化广播接收器，黑屏或亮屏显示锁屏界面
     class ScreenOffReceiver extends BroadcastReceiver {
     	@Override
     	public void onReceive(Context context, Intent intent) {
+    		//若在通话则不显示锁屏界面
     		if(StaticData.iscalling)
     			return;
     	    String action = intent.getAction();
@@ -367,7 +353,6 @@ public class AutoReplyService extends AccessibilityService {
     	 @Override
     	 public void onReceive(Context context, Intent intent) {
     		 if(intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
-    			 //去电（拨出）
     			 StaticData.iscalling = true;
     			 Log.i("demo", "去电");
     		 } else {
@@ -380,23 +365,19 @@ public class AutoReplyService extends AccessibilityService {
 	private PhoneStateListener listener = new PhoneStateListener() {
 		@Override
 		public void onCallStateChanged(int state, String incomingNumber) {
-		   	//state 当前状态 incomingNumber,貌似没有去电的API
 		 	super.onCallStateChanged(state, incomingNumber);
 		 	switch(state) {
 		 	case TelephonyManager.CALL_STATE_IDLE:
-		 		//System.out.println("挂断");
 		 		StaticData.iscalling = false;
 		 		Log.i("demo", "挂断");
 		 		break;
 		 	case TelephonyManager.CALL_STATE_OFFHOOK:
-		 		//System.out.println("接听");
 		 		StaticData.iscalling = true;
 		 		Log.i("demo", "接听");
 		 		break;
 		 	case TelephonyManager.CALL_STATE_RINGING:
 		 		StaticData.iscalling = true;
 		 		Log.i("demo", "来电");
-		 		//System.out.println("响铃:来电号码"+incomingNumber);
 		 		break;
 		   }
 		}
